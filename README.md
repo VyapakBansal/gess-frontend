@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GESS Website + Portal
 
-## Getting Started
+Public website and authenticated self-serve content portal for the **Geomatics Engineering Student Society**.
 
-First, run the development server:
+## Stack
+
+- Next.js App Router (Server Components + ISR)
+- TypeScript + Tailwind CSS v4
+- Supabase Auth, Postgres, Storage
+- Webhook-driven on-demand revalidation
+
+## Local development
 
 ```bash
+cp .env.example .env.local
+# fill Supabase + secrets (see supabase/SETUP.md)
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Routes
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Path | Audience |
+| --- | --- |
+| `/` `/about` `/events` `/contact` | Public |
+| `/portal/login` | Executives |
+| `/portal` `/portal/profile` `/portal/events` | Executives |
+| `/portal/admin/accounts` | Admins |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Design tokens
 
-## Learn More
+- Dark canvas / light canvas via theme toggle (default dark)
+- Accent: desaturated cyan (`#5BA8A8` dark / `#3F8F8F` light)
 
-To learn more about Next.js, take a look at the following resources:
+## Important constraints
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Public routes must not import `@/lib/supabase/client` or portal forms.
+- Use **publishable** + **secret** keys (`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`) — not legacy anon/service_role.
+- Secret key is server-only (`@/lib/supabase/admin`).
+- Event upcoming/past status is **manual**, never date-derived.
+- Apply `supabase/schema.sql` yourself — this repo does not provision Supabase/Vercel.

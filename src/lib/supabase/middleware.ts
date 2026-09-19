@@ -56,11 +56,29 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
+  // Only send logged-in users away from /portal/login when they have an
+  // active team row. Otherwise Auth↔login redirects loop ("refreshed too many times")
+  // e.g. after an invite that created auth.users but no public.team row.
   if (isLogin && user) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/portal";
-    redirectUrl.search = "";
-    return NextResponse.redirect(redirectUrl);
+    const errorParam = request.nextUrl.searchParams.get("error");
+    if (errorParam === "inactive" || errorParam === "config") {
+      return supabaseResponse;
+    }
+
+    const { data: profile } = await supabase
+      .from("team")
+      .select("id, is_active")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profile?.is_active) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/portal";
+      redirectUrl.search = "";
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    return supabaseResponse;
   }
 
   return supabaseResponse;

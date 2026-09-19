@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "bulk-invite": "node --env-file=.env.local scripts/bulk-invite.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",

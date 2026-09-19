@@ -34,6 +34,8 @@ export async function requireTeamProfile() {
   }
 
   if (!profile || !profile.is_active) {
+    // Clear the session so middleware does not bounce back to /portal.
+    await supabase.auth.signOut();
     redirect("/portal/login?error=inactive");
   }
 

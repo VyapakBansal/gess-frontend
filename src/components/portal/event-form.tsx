@@ -117,6 +117,11 @@ export function EventForm({
         }
 
         setMessage({ tone: "success", text: "Event updated." });
+        await fetch("/api/portal/revalidate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ table: "events" }),
+        }).catch(() => null);
         router.refresh();
       } else {
         const { data, error } = await supabase
@@ -125,6 +130,11 @@ export function EventForm({
           .select("id")
           .single();
         if (error) throw error;
+        await fetch("/api/portal/revalidate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ table: "events" }),
+        }).catch(() => null);
         router.push(`/portal/events/${data.id}/edit`);
         router.refresh();
       }

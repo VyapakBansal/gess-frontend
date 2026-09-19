@@ -109,6 +109,13 @@ export function ProfileForm({ profile }: { profile: TeamMember }) {
         }
       }
 
+      // Bust public /team ISR cache (router.refresh only updates the portal).
+      await fetch("/api/portal/revalidate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ table: "team" }),
+      }).catch(() => null);
+
       setMessage({ tone: "success", text: "Profile updated." });
       setSelectedFile(null);
       router.refresh();

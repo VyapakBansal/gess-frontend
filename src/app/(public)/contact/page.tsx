@@ -5,7 +5,8 @@ import { SITE } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Contact GESS for membership, partnerships, and event inquiries.",
+  description:
+    "Contact GESS for membership, partnerships, and event inquiries.",
 };
 
 export default function ContactPage() {
@@ -22,7 +23,10 @@ export default function ContactPage() {
           <div className="mt-10 space-y-6 border border-gess-border bg-gess-surface/40 p-6">
             <div>
               <p className="text-meta text-gess-accent mb-2">Email</p>
-              <a href={`mailto:${SITE.email}`} className="text-sm hover:text-gess-accent">
+              <a
+                href={`mailto:${SITE.email}`}
+                className="text-sm hover:text-gess-accent"
+              >
                 {SITE.email}
               </a>
             </div>
@@ -34,18 +38,23 @@ export default function ContactPage() {
               <p className="text-meta text-gess-accent mb-2">Social</p>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href={SITE.socials.instagram} className="hover:text-gess-accent" target="_blank" rel="noreferrer">
+                  <a
+                    href={SITE.socials.instagram}
+                    className="hover:text-gess-accent"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     Instagram
                   </a>
                 </li>
                 <li>
-                  <a href={SITE.socials.linkedin} className="hover:text-gess-accent" target="_blank" rel="noreferrer">
+                  <a
+                    href={SITE.socials.linkedin}
+                    className="hover:text-gess-accent"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     LinkedIn
-                  </a>
-                </li>
-                <li>
-                  <a href={SITE.socials.discord} className="hover:text-gess-accent" target="_blank" rel="noreferrer">
-                    Discord
                   </a>
                 </li>
               </ul>

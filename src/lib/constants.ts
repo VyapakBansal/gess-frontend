@@ -11,9 +11,9 @@ export const SITE = {
   },
   founded: 2026,
   socials: {
-    instagram: "https://instagram.com/",
-    linkedin: "https://linkedin.com/",
-    discord: "https://discord.gg/",
+    instagram: "https://www.instagram.com/gessuofc/",
+    linkedin:
+      "https://www.linkedin.com/company/geomatics-engineering-student-society/",
   },
   schulichGeomatics: "https://schulich.ucalgary.ca/geomatics",
 } as const;

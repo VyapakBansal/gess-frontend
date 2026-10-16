@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { assertAdminApi } from "@/lib/admin-api";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { reorderIds } from "@/lib/team-order";
 
 const orderSchema = z.object({
   id: z.string().uuid(),
@@ -22,13 +23,33 @@ export async function PATCH(request: Request) {
   }
 
   const admin = createAdminClient();
-  const { error } = await admin
+  const { data: members, error: readError } = await admin
     .from("team")
-    .update({ display_order: parsed.data.display_order })
-    .eq("id", parsed.data.id);
+    .select("id, display_order")
+    .order("display_order", { ascending: true })
+    .order("created_at", { ascending: true })
+    .order("id", { ascending: true });
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+  if (readError) {
+    return NextResponse.json({ error: readError.message }, { status: 400 });
+  }
+
+  const ordered = reorderIds(
+    (members ?? []).map((member) => member.id),
+    parsed.data.id,
+    parsed.data.display_order,
+  );
+  if (!ordered) {
+    return NextResponse.json({ error: "Member not found" }, { status: 404 });
+  }
+
+  const currentOrder = new Map((members ?? []).map((member) => [member.id, member.display_order]));
+  for (const [index, memberId] of ordered.entries()) {
+    if (currentOrder.get(memberId) === index) continue;
+    const { error } = await admin.from("team").update({ display_order: index }).eq("id", memberId);
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
   }
 
   revalidatePath("/team");

@@ -234,7 +234,7 @@ export function AccountsTable({
       <div>
         <p className="text-meta text-gess-accent mb-2">Team page</p>
         <p className="text-sm text-gess-muted">
-          Upload a photo for anyone here. Removing a member takes them off the public page and deletes their portal login.
+          Upload a photo for anyone here. Position 1 is the top of the team page — moving someone shifts the rest of the list. Removing a member takes them off the public page and deletes their portal login.
         </p>
       </div>
       {accounts.length === 0 ? (
@@ -243,15 +243,12 @@ export function AccountsTable({
         </div>
       ) : (
         <div className="divide-y divide-gess-border border border-gess-border">
-          {accounts.map((account) => (
+          {accounts.map((account, index) => (
             <MemberRow
               key={account.id}
               account={account}
-              orderCount={Math.max(
-                accounts.length,
-                12,
-                ...accounts.map((member) => member.display_order + 1),
-              )}
+              position={index}
+              total={accounts.length}
               isSelf={account.id === currentUserId}
             />
           ))}
@@ -263,11 +260,13 @@ export function AccountsTable({
 
 function MemberRow({
   account,
-  orderCount,
+  position,
+  total,
   isSelf,
 }: {
   account: TeamMember;
-  orderCount: number;
+  position: number;
+  total: number;
   isSelf: boolean;
 }) {
   const router = useRouter();
@@ -356,7 +355,9 @@ function MemberRow({
     }
   }
 
-  async function updateOrder(displayOrder: number) {
+  async function updateOrder(nextPosition: number) {
+    if (nextPosition === position) return;
+
     setPending("order");
     setError(null);
 
@@ -364,7 +365,7 @@ function MemberRow({
       const response = await fetch("/api/admin/accounts", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: account.id, display_order: displayOrder }),
+        body: JSON.stringify({ id: account.id, display_order: nextPosition }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Unable to update order");
@@ -464,18 +465,18 @@ function MemberRow({
         </div>
 
         <div className="w-full sm:w-28">
-          <Label htmlFor={`order-${account.id}`}>Order</Label>
+          <Label htmlFor={`order-${account.id}`}>Position</Label>
           <Select
             id={`order-${account.id}`}
             className="mt-2"
-            aria-label={`Display order for ${account.display_name}`}
-            value={String(account.display_order)}
+            aria-label={`Position for ${account.display_name}`}
+            value={String(position)}
             disabled={pending !== null}
             onChange={(event) => void updateOrder(Number(event.target.value))}
           >
-            {Array.from({ length: orderCount }, (_, index) => (
+            {Array.from({ length: total }, (_, index) => (
               <option key={index} value={index}>
-                {index}
+                {index + 1}
               </option>
             ))}
           </Select>

@@ -10,7 +10,9 @@ export async function getTeamMembers(): Promise<TeamMember[]> {
     .from("team")
     .select("*")
     .eq("is_active", true)
-    .order("display_order", { ascending: true });
+    .order("display_order", { ascending: true })
+    .order("created_at", { ascending: true })
+    .order("id", { ascending: true });
 
   if (error) {
     console.error("Failed to load team:", error.message);

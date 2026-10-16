@@ -16,7 +16,9 @@ export default async function AdminAccountsPage() {
   const { data, error } = await client
     .from("team")
     .select("*")
-    .order("display_order", { ascending: true });
+    .order("display_order", { ascending: true })
+    .order("created_at", { ascending: true })
+    .order("id", { ascending: true });
 
   if (error) {
     throw new Error(error.message);

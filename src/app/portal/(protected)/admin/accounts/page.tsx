@@ -1,32 +1,39 @@
 import type { Metadata } from "next";
-import { AccountsTable, InviteForm } from "@/components/portal/admin-accounts";
+import { AccountsTable, AddMemberForm } from "@/components/portal/admin-accounts";
 import { requireAdmin } from "@/lib/auth";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { hasSecretSupabaseEnv } from "@/lib/supabase/env";
 import type { TeamMember } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Accounts",
+  title: "Members",
   robots: { index: false, follow: false },
 };
 
 export default async function AdminAccountsPage() {
-  const { supabase } = await requireAdmin();
-  const { data } = await supabase
+  const { supabase, user } = await requireAdmin();
+  const client = hasSecretSupabaseEnv() ? createAdminClient() : supabase;
+  const { data, error } = await client
     .from("team")
     .select("*")
     .order("display_order", { ascending: true });
+
+  if (error) {
+    throw new Error(error.message);
+  }
 
   return (
     <div className="space-y-8">
       <div>
         <p className="text-meta text-gess-accent mb-2">Admin</p>
-        <h1 className="text-3xl font-semibold tracking-tight">Accounts</h1>
-        <p className="mt-2 text-sm text-gess-muted">
-          Invite executives, reorder team cards, and deactivate departed members.
+        <h1 className="text-3xl font-semibold tracking-tight">Members</h1>
+        <p className="mt-2 max-w-2xl text-sm text-gess-muted">
+          Add anyone to the public team page, upload their photo, and remove them when they leave.
         </p>
       </div>
 
-      <InviteForm />
-      <AccountsTable accounts={(data ?? []) as TeamMember[]} />
+      <AddMemberForm />
+      <AccountsTable accounts={(data ?? []) as TeamMember[]} currentUserId={user.id} />
     </div>
   );
 }

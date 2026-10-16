@@ -5,7 +5,7 @@ The app code is ready. Apply the following in Supabase (and your host) yourself.
 ## 1. Database & storage
 
 1. Open the Supabase SQL Editor.
-2. Run [`schema.sql`](./schema.sql) in full.
+2. Run [`schema.sql`](./schema.sql) in full. Re-run it if you applied an older copy so admins can read every team row, including hidden ones.
 3. Confirm buckets `team-photos` and `event-images` exist and are public.
 
 ## 2. Auth settings

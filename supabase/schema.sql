@@ -158,6 +158,13 @@ create policy "Admins can delete team rows"
   to authenticated
   using (public.is_admin());
 
+drop policy if exists "Admins can read all team rows" on public.team;
+create policy "Admins can read all team rows"
+  on public.team
+  for select
+  to authenticated
+  using (public.is_admin());
+
 -- =============================================================================
 -- Row Level Security — events
 -- =============================================================================

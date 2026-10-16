@@ -77,7 +77,7 @@ export function PortalShell({
                     : "text-gess-white/75 hover:bg-gess-white/5 hover:text-gess-white",
                 )}
               >
-                Accounts
+                Members
               </Link>
             ) : null}
             <Link

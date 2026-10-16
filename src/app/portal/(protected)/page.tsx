@@ -72,7 +72,7 @@ export default async function PortalDashboardPage() {
             href="/portal/admin/accounts"
             className="inline-flex h-11 items-center rounded-sm border border-gess-border px-5 text-sm"
           >
-            Manage Accounts
+            Manage members
           </Link>
         ) : null}
       </div>

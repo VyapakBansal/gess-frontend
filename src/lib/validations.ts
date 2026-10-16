@@ -43,6 +43,41 @@ export const inviteSchema = z.object({
   is_admin: z.boolean().default(false),
 });
 
+const optionalUrl = z
+  .string()
+  .trim()
+  .url("Enter a valid URL")
+  .optional()
+  .or(z.literal(""));
+
+const optionalDescription = z
+  .string()
+  .trim()
+  .max(DESCRIPTION_MAX, `Description must be ${DESCRIPTION_MAX} characters or fewer`)
+  .optional()
+  .or(z.literal(""));
+
+export const memberCreateSchema = z.object({
+  display_name: z.string().trim().min(1, "Name is required").max(80),
+  role: z.string().trim().min(1, "Role is required").max(80),
+  description: optionalDescription,
+  linkedin_url: optionalUrl,
+  email: z.string().trim().email("Valid email required").optional().or(z.literal("")),
+  is_admin: z.boolean().default(false),
+});
+
+export const memberUpdateSchema = z.object({
+  id: z.string().uuid(),
+  display_name: z.string().trim().min(1, "Name is required").max(80).optional(),
+  role: z.string().trim().min(1, "Role is required").max(80).optional(),
+  description: optionalDescription,
+  linkedin_url: optionalUrl,
+  photo_url: z
+    .union([z.string().trim().url("Enter a valid URL"), z.literal(""), z.null()])
+    .optional(),
+  is_admin: z.boolean().optional(),
+});
+
 export const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100),
   email: z.string().trim().email("Valid email required"),

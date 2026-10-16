@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { assertAdminApi } from "@/lib/admin-api";
@@ -30,5 +31,8 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
+  revalidatePath("/team");
+  revalidatePath("/about");
+  revalidatePath("/");
   return NextResponse.json({ ok: true });
 }
